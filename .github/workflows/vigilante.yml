@@ -1,0 +1,47 @@
+name: Vigilante RFFM
+
+# Cada ~10 min mira la RFFM y manda los avisos push de Mi Equipo.
+# GitHub puede retrasar los "cron" unos minutos en horas de mucha carga: es normal.
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write # solo para el "latido" de abajo
+
+concurrency:
+  group: vigilante
+  cancel-in-progress: false
+
+jobs:
+  vigilar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Vigilar la RFFM y avisar
+        run: node vigilante.mjs
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      # GitHub apaga los "cron" de un repositorio sin actividad en 60 días: con un commit vacío
+      # cada ~45 días se mantiene vivo.
+      - name: Mantener activo el cron
+        run: |
+          ultimo=$(git log -1 --format=%ct)
+          ahora=$(date +%s)
+          if [ $((ahora - ultimo)) -gt $((45 * 86400)) ]; then
+            git config user.name "vigilante"
+            git config user.email "vigilante@users.noreply.github.com"
+            git commit --allow-empty -m "Mantener activo el vigilante"
+            git push
+          fi

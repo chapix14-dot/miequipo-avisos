@@ -1,0 +1,30 @@
+rules_version = '2';
+
+// Reglas de Firestore para Mi Equipo.
+//  - `seguidos/{grupo}_{equipo}`: las apps solo pueden CREAR/ACTUALIZAR (por REST, sin cuenta)
+//    un documento con exactamente estos campos. Nadie puede leer ni borrar desde fuera.
+//  - Todo lo demás (`estado/...`) solo lo toca el vigilante con su cuenta de servicio, que se
+//    salta las reglas.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /seguidos/{clave} {
+      allow get, list, delete: if false;
+      allow create, update: if clave.matches('^[0-9]{1,12}_[0-9]{1,12}$')
+        && request.resource.data.keys().hasOnly(['grupoId', 'competicionId', 'equipoId', 'temporada', 'nombre', 'visto'])
+        && request.resource.data.keys().hasAll(['grupoId', 'competicionId', 'equipoId', 'temporada', 'nombre', 'visto'])
+        && request.resource.data.grupoId is string && request.resource.data.grupoId.matches('^[0-9]{1,12}$')
+        && request.resource.data.competicionId is string && request.resource.data.competicionId.matches('^[0-9]{1,12}$')
+        && request.resource.data.equipoId is string && request.resource.data.equipoId.matches('^[0-9]{1,12}$')
+        && clave == request.resource.data.grupoId + '_' + request.resource.data.equipoId
+        && request.resource.data.temporada is int
+        && request.resource.data.temporada >= 1 && request.resource.data.temporada <= 99
+        && request.resource.data.nombre is string && request.resource.data.nombre.size() <= 80
+        && request.resource.data.visto is timestamp;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "miequipo-vigilante",
+  "version": "1.0.0",
+  "description": "Vigila la RFFM y manda avisos push (FCM) a la app Mi Equipo",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node vigilante.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "firebase-admin": "^14.5.0"
+  }
+}
