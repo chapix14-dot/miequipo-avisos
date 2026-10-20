@@ -39,7 +39,7 @@ notificación al móvil por push (Firebase Cloud Messaging)**. El móvil ya no t
 * Pendiente: **Configuración del proyecto → Cuentas de servicio → Generar nueva clave privada**
   (un `.json`): es el secreto del vigilante, solo va al paso 7.
 
-### 2. Repositorio en GitHub (pendiente) (público, para que los minutos de Actions sean ilimitados)
+### 2. Repositorio en GitHub (hecho: chapix14-dot/miequipo-avisos) (público, para que los minutos de Actions sean ilimitados)
 
 6. Crea un repositorio **público** (p. ej. `miequipo-avisos`) y sube **el contenido de esta carpeta
    `servidor`** como raíz del repo (incluida `.github/`; `node_modules` ya está ignorado):
@@ -103,3 +103,8 @@ vigilante dirá `Equipos vigilados: 1 en 1 grupos`.
 * Si algún día quieres puntualidad de 1 min: mover `vigilante.mjs` a una *Cloud Function
   programada* (plan Blaze, coste prácticamente nulo) — la lógica de `logica.mjs` se reutiliza igual.
 * Cada temporada nueva sigue valiendo lo de siempre: volver a añadir el equipo (códigos de grupo nuevos).
+
+## Aviso de prueba a un móvil
+
+GitHub → Actions → *Vigilante RFFM* → **Run workflow** → en "tema_prueba" escribe `eq_{grupo}_{equipo}`
+(p. ej. `eq_26737762_4945054`). Manda una notificación de prueba a los móviles que sigan ese equipo.
