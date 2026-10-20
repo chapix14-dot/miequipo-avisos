@@ -76,6 +76,21 @@ async function main() {
   const mensajeria = getMessaging();
   const ahora = Date.now();
 
+  // Modo prueba (workflow_dispatch con "tema_prueba"): manda una notificación de mentira a ese
+  // tema (eq_{grupo}_{equipo}) para comprobar que llega al móvil, y termina.
+  if (process.env.TEMA_PRUEBA) {
+    const tema = process.env.TEMA_PRUEBA.trim();
+    if (!/^eq_[0-9]{1,12}_[0-9]{1,12}$/.test(tema)) throw new Error(`Tema de prueba no válido: ${tema}`);
+    await mensajeria.send({
+      topic: tema,
+      notification: { title: '🔔 Prueba de avisos · Mi Equipo', body: 'Si lees esto, los avisos desde la nube funcionan.' },
+      data: { tipo: 'prueba', clave: `prueba:${ahora}`, detalle: 'Aviso de prueba enviado desde el vigilante.' },
+      android: { priority: 'high', ttlMillis: 3600 * 1000, notification: { channelId: 'resultados', tag: `prueba:${ahora}` } },
+    });
+    console.log(`Aviso de prueba enviado al tema ${tema}.`);
+    return;
+  }
+
   // 1) Equipos vigilados, agrupados por grupo; se olvidan los que llevan 90 días sin "visto".
   const instantanea = await db.collection('seguidos').get();
   const grupos = new Map();

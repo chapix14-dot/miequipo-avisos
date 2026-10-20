@@ -6,6 +6,11 @@ on:
   schedule:
     - cron: '*/10 * * * *'
   workflow_dispatch:
+    inputs:
+      tema_prueba:
+        description: 'Opcional: tema al que mandar un aviso de prueba (eq_GRUPO_EQUIPO). Vacío = pasada normal'
+        required: false
+        default: ''
 
 permissions:
   contents: write # solo para el "latido" de abajo
@@ -32,6 +37,7 @@ jobs:
         run: node vigilante.mjs
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          TEMA_PRUEBA: ${{ github.event.inputs.tema_prueba }}
 
       # GitHub apaga los "cron" de un repositorio sin actividad en 60 días: con un commit vacío
       # cada ~45 días se mantiene vivo.
