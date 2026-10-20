@@ -85,7 +85,7 @@ async function main() {
       topic: tema,
       notification: { title: '🔔 Prueba de avisos · Mi Equipo', body: 'Si lees esto, los avisos desde la nube funcionan.' },
       data: { tipo: 'prueba', clave: `prueba:${ahora}`, detalle: 'Aviso de prueba enviado desde el vigilante.' },
-      android: { priority: 'high', ttlMillis: 3600 * 1000, notification: { channelId: 'resultados', tag: `prueba:${ahora}` } },
+      android: { priority: 'high', ttl: 3600 * 1000, notification: { channelId: 'resultados', tag: `prueba:${ahora}` } },
     });
     console.log(`Aviso de prueba enviado al tema ${tema}.`);
     return;
@@ -153,7 +153,7 @@ async function main() {
           data: { tipo: a.tipo, clave: a.clave, detalle: a.detalle, titulo: a.titulo, texto: a.texto },
           android: {
             priority: 'high',
-            ttlMillis: 12 * 3600 * 1000,
+            ttl: 12 * 3600 * 1000,
             notification: { channelId: 'resultados', tag: a.clave },
           },
         });
